@@ -1,0 +1,32 @@
+---
+title: "Suicide"
+author: "ShubhangiAgrawal20BCE1161"
+date: '2023-04-04'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+year = 2000:2021
+total_suicide = c(108593,108506,110417,110851,113697,113914,118112,122637,125017,127151,134599,135585,135445,134799,131666,133623,131008,129887,134516,139123,153052,164033)
+rel = lm(total_suicide~year)
+print(rel)
+
+```
+```{r}
+print(summary(rel))
+
+```
+```{r}
+a = data.frame(year=c(2022,2023,2024))
+predict(rel, a)
+
+```
+```{r}
+plot(total_suicide,year,col="blue",main="Suicides in India",
+abline(lm(year~total_suicide)),cex = 1.3,pch = 16,xlab = "Year",ylab = "Total number of suicides")
+```
+
