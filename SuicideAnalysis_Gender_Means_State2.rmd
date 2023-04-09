@@ -1,0 +1,125 @@
+---
+title: "Hit Song Prediction"
+author: "Shubhangi Agrawal 20BCE1161"
+date: "2022-12-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+# install.packages("rio")  
+# importing the required library
+library(rio)
+  
+# reading data from all sheets
+data <- import_list("SuicideIndiaDataMain.xlsx")
+  
+# print data
+data1 = data$Sheet1
+data2 = data$Sheet3
+```
+```{r}
+head(data1)
+colnames(data1)
+```
+```{r}
+#get all the unique values of the column Cause of Suicide
+unique(data1$`Cause Of Suicide`)
+```
+##Thus there are 10 Means taken by the people to commit suicide
+
+#Number of deaths cause for each means taken
+```{r}
+# Next, we calculate the mean number of deaths by cause of suicide category
+means_by_cause <- aggregate(`No. of Deaths` ~ `Cause Of Suicide`, data1, mean)
+
+# Then, we sort the means in descending order to find the category with the highest mean
+means_by_cause <- means_by_cause[order(-means_by_cause$`No. of Deaths`),]
+
+# Add a column for the x labels
+means_by_cause$x_labels <- 1:nrow(means_by_cause)
+
+bar_colors <- c("#619CFF", "#FF6B6B", "#58D68D", "#F4D03F", "#A569BD", "#F1948A","black","white","orange","brown")
+
+# Finally, we create a bar plot to visualize the means with x labels
+barplot(means_by_cause$`No. of Deaths`, names.arg = means_by_cause$`Cause Of Suicide`,
+        xlab = "Means of Suicide", ylab = "Mean Number of Deaths",
+        main = "Mean Number of Deaths by Means of Suicide",
+        col = bar_colors[1:nrow(means_by_cause)],
+        xlim = c(0, nrow(means_by_cause)+1),
+        ylim = c(0, max(means_by_cause$`No. of Deaths`) + 1))
+
+# Add the x labels to the graph
+text(1:nrow(means_by_cause), -0.5, 1:nrow(means_by_cause), pos = 1)
+
+# Add a legend to the bar plot
+legend("topright", legend = means_by_cause$`Cause Of Suicide`, 
+       fill = bar_colors[1:nrow(means_by_cause)],
+       title = "Category",
+       inset=c(0.05,0),
+       cex=0.8)
+```
+
+#Which means is causing most deaths overall?
+
+##State wise most deaths by suicides
+```{r}
+# Load the required package
+library(ggplot2)
+
+# Sum the number of deaths by state
+deaths_by_state <- aggregate(`No. of Deaths` ~ `State / UT`, data = data1, FUN = sum)
+
+# Sort the data frame in descending order of number of deaths and reorder levels of State / UT variable
+deaths_by_state <- deaths_by_state[order(-deaths_by_state$`No. of Deaths`), ]
+deaths_by_state$`State / UT` <- factor(deaths_by_state$`State / UT`, levels = deaths_by_state$`State / UT`)
+
+# Create the bar chart with reordered levels
+ggplot(deaths_by_state, aes(x = `State / UT`, y = `No. of Deaths`)) +
+  geom_bar(stat = "identity", fill = "#F4D03F") +
+  labs(title = "Number of Suicides by State", x = "State", y = "Number of Suicides") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+#Which means of suicide is max in which state?
+#For each state, which means of suicide is causing most deaths?
+
+
+```{r}
+library(ggplot2)
+
+# Create a bar graph showing the number of deaths by means of suicide for each state/UT
+ggplot(data1, aes(x = `Cause Of Suicide`, y = `No. of Deaths`, fill = `Cause Of Suicide`)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  xlab("Cause Of Suicide") +
+  ylab("Number of Deaths") +
+  ggtitle("Number of Deaths by Means of Suicide for Each State/UT") +
+  facet_wrap(~ `State / UT`, scales = "free")
+
+```
+
+
+
+
+
+#Which gender is more prone to doing suicide?
+```{r}
+library(ggplot2)
+head(data1)
+# Aggregate the number of deaths by gender and cause of suicide
+deaths_by_gender_cause <- aggregate(`No. of Deaths` ~ Category + `Cause Of Suicide`, data = data1, FUN = sum)
+
+# Create the stacked bar chart
+ggplot(deaths_by_gender_cause, aes(x = `Cause Of Suicide`, y = `No. of Deaths`, fill = Category)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Suicide Deaths by Gender and Cause", x = "Cause of Suicide", y = "Number of Deaths", fill = "Gender") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+```

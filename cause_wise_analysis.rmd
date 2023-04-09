@@ -1,0 +1,26 @@
+---
+title: "Suicide"
+author: "ShubhangiAgrawal20BCE1161"
+date: '2023-04-04'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(rio)
+  
+# reading data from all sheets
+data1 <- import_list("E:\\VIT\\6thSem\\Projects\\Data vis\\code and final dataset\\SuicideIndiaDataUpdated-Sunburst.xlsx")
+  
+# print data
+data = data1$Sheet3
+# Create a vector of colors for the pie chart
+# colors <- c('#7cbfe6', '#368039', '#7241a3', '#CC79A7', '#84dbb2', '#116591', '#aadb84', '#73356d', '#84cf88', '#f08275', '#90e0dc', '#a7256c')
+    colors <- c('#7cbfe6', '#368039', '#7241a3', '#CC79A7', '#84dbb2', '#116591', '#aadb84', '#73356d', '#84cf88', '#f08275', '#90e0dc', '#a7256c')# Create the pie chart
+pie(data$Percentage, labels = data$Percentage, col = colors)
+legend("topright", legend = data$ContributingFactors, fill = colors, cex = 0.8, title = "Causes")
+print(data$ContributingFactors)
+```
